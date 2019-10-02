@@ -1818,3 +1818,7 @@ variable "elasticache_outbound_acl_rules" {
   ]
 }
 
+variable "aws_region" {
+    type = string
+    description = "AWS region to deploy resources to."
+}
