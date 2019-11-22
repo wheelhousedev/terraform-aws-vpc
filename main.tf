@@ -1088,6 +1088,7 @@ resource "aws_vpc_peering_connection" "dev" {
 resource "aws_vpc_peering_connection" "prod" {
     count = var.create_prod_vpc_peering ? 1 : 0
   peer_vpc_id   = var.prod_vpc_id
+  peer_owner_id = var.prod_account_id
   vpc_id        = aws_vpc.this[0].id
 
   tags = var.tags
