@@ -1077,7 +1077,7 @@ resource "aws_default_vpc" "this" {
 ##############
 
 resource "aws_vpc_peering_connection" "dev" {
-    count = var.dev_vpc_id == "" ? 0 : 1
+    count = var.create_dev_vpc_peering ? 1 : 0
   peer_vpc_id   = var.dev_vpc_id
   vpc_id        = aws_vpc.this[0].id
 
@@ -1085,7 +1085,7 @@ resource "aws_vpc_peering_connection" "dev" {
 }
 
 resource "aws_vpc_peering_connection" "prod" {
-    count = var.prod_vpc_id == "" ? 0 : 1
+    count = var.create_prod_vpc_peering ? 1 : 0
   peer_vpc_id   = var.prod_vpc_id
   vpc_id        = aws_vpc.this[0].id
 
