@@ -1822,3 +1822,21 @@ variable "aws_region" {
     type = string
     description = "AWS region to deploy resources to."
 }
+
+variable "dev_vpc_id" {
+    type = string
+    description = "VPC ID of the dev account"
+    default = ""
+}
+
+variable "prod_vpc_id" {
+    type = string
+    description = "VPC ID of the prod account"
+    default = ""
+}
+
+variable "master_vpc_id" {
+    type = string
+    description = "VPC ID of the master account. Only to be provided if the current VPC should be peered to it."
+    default = ""
+}
