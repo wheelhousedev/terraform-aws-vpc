@@ -1079,6 +1079,7 @@ resource "aws_default_vpc" "this" {
 resource "aws_vpc_peering_connection" "dev" {
     count = var.create_dev_vpc_peering ? 1 : 0
   peer_vpc_id   = var.dev_vpc_id
+  peer_owner_id = var.dev_account_id
   vpc_id        = aws_vpc.this[0].id
 
   tags = var.tags

@@ -1852,3 +1852,8 @@ variable "master_vpc_id" {
     description = "VPC ID of the master account. Only to be provided if the current VPC should be peered to it."
     default = ""
 }
+
+variable "dev_account_id" {
+    type = string
+    description = "Account ID of the dev account"
+}
