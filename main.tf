@@ -1102,10 +1102,14 @@ resource "aws_vpc_peering_connection" "prod" {
 # AWS allows a cross-account VPC Peering Connection to be deleted from either the requester's or accepter's side. However, Terraform only allows the VPC Peering Connection to be deleted from the requester's side by removing the corresponding aws_vpc_peering_connection resource from your configuration. Removing a aws_vpc_peering_connection_accepter resource from your configuration will remove it from your statefile and management, but will not destroy the VPC Peering Connection.
 # https://www.terraform.io/docs/providers/aws/r/vpc_peering_accepter.html #
 
+data "aws_vpc_peering_connection" "pc" {
+  vpc_id          = var.master_vpc_id
+}
+
 resource "aws_vpc_peering_connection_accepter" "this" {
   count = var.master_vpc_id == "" ? 0 : 1
 #   provider                  = "aws.peer"
-  vpc_peering_connection_id = var.master_vpc_id
+  vpc_peering_connection_id = data.aws_vpc_peering_connection.pc.id
 
   tags = var.tags
 }
