@@ -1856,9 +1856,11 @@ variable "master_vpc_id" {
 variable "dev_account_id" {
     type = string
     description = "Account ID of the dev account"
+    default = ""
 }
 
-variable "dev_account_id" {
+variable "prod_account_id" {
     type = string
-    description = "Account ID of the dev account"
+    description = "Account ID of the prod account"
+    default = ""
 }
