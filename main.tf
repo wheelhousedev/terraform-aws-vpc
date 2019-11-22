@@ -1102,7 +1102,7 @@ resource "aws_vpc_peering_connection" "prod" {
 
 resource "aws_vpc_peering_connection_accepter" "this" {
   count = var.master_vpc_id == "" ? 0 : 1
-  provider                  = "aws.peer"
+#   provider                  = "aws.peer"
   vpc_peering_connection_id = var.master_vpc_id
 
   tags = var.tags
