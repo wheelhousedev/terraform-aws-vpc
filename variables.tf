@@ -1832,11 +1832,13 @@ variable "dev_vpc_id" {
 variable "create_dev_vpc_peering" {
     type = bool
     description = "Whether to create dev account VPC peering."
+    default = false
 }
 
 variable "create_prod_vpc_peering" {
     type = bool
     description = "Whether to create prod account VPC peering."
+    default = false
 }
 
 variable "prod_vpc_id" {
