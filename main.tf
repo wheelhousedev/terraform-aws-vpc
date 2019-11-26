@@ -1114,7 +1114,7 @@ provider "aws" {
   alias               = "peer"
   region              = var.aws_region
   allowed_account_ids = [var.master_account_id]
-  assume_role = {
+  assume_role {
     role_arn = "arn:aws:iam::${var.master_account_id}:role/${var.master_account_role_name}"
   }
 }
