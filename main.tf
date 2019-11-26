@@ -1110,9 +1110,14 @@ data "aws_vpc_peering_connection" "pc" {
   owner_id = var.master_account_id 
 }
 
+provider "aws" {
+  alias  = "peer"
+  region = "us-west-2"
+}
+
 resource "aws_vpc_peering_connection_accepter" "this" {
   count = var.master_vpc_id == "" ? 0 : 1
-#   provider                  = "aws.peer"
+  provider                  = "aws.peer"
   vpc_peering_connection_id = data.aws_vpc_peering_connection.pc.id
   auto_accept = true # use this if you want it to accept
   tags = var.tags
