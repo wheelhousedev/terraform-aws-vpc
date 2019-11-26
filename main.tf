@@ -2,6 +2,10 @@
 provider "aws" {
   region = var.aws_region
 }
+provider "aws" {
+  alias  = "peer"
+  region = var.aws_region
+}
 
 terraform {
   # The configuration for this backend will be filled in by Terragrunt
@@ -1110,10 +1114,7 @@ data "aws_vpc_peering_connection" "pc" {
   owner_id = var.master_account_id 
 }
 
-provider "aws" {
-  alias  = "peer"
-  region = "us-west-2"
-}
+
 
 resource "aws_vpc_peering_connection_accepter" "this" {
   count = var.master_vpc_id == "" ? 0 : 1
