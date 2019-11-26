@@ -1870,3 +1870,8 @@ variable "master_account_id" {
     description = "Account ID of the master account"
     default = ""
 }
+
+variable "master_account_role_name" {
+    type = string
+    description = "Role name of the master account to assume when using peer provider"
+}
