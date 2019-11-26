@@ -1104,6 +1104,7 @@ resource "aws_vpc_peering_connection" "prod" {
 
 data "aws_vpc_peering_connection" "pc" {
   vpc_id          = var.master_vpc_id
+  owner_id = var.master_account_id
 }
 
 resource "aws_vpc_peering_connection_accepter" "this" {

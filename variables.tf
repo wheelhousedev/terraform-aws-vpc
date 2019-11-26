@@ -1864,3 +1864,9 @@ variable "prod_account_id" {
     description = "Account ID of the prod account"
     default = ""
 }
+
+variable "master_account_id" {
+    type = string
+    description = "Account ID of the master account"
+    default = ""
+}
