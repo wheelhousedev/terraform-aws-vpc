@@ -1875,9 +1875,3 @@ variable "master_account_role_name" {
     type = string
     description = "Role name of the master account to assume when using peer provider"
 }
-
-variable "is_master" {
-    type = bool
-    description = "Is Master account or not"
-    default = false
-}
