@@ -1875,3 +1875,8 @@ variable "master_account_role_name" {
     type = string
     description = "Role name of the master account to assume when using peer provider"
 }
+
+variable "vpc_peering_id_for_accepter" {
+    type = string
+    description = "pcx ID for the peering connection. Used because everything is broken."
+}
