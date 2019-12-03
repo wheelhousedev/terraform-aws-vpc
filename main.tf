@@ -1,3 +1,21 @@
+# Previously, we didn't need this. Now, we do. How exciting.
+provider "aws" {
+  region = var.aws_region
+}
+
+terraform {
+  # The configuration for this backend will be filled in by Terragrunt
+  backend "s3" {}
+
+  # The latest version of Terragrunt (v0.19.0 and above) requires Terraform 0.12.0 or above.
+  required_version = ">= 0.12.0"
+
+    #   one user reporting this version fixes the data source for vpc peering id issue
+      required_providers {
+        aws = "= 2.40.0"
+    }
+}
+
 locals {
   max_subnet_length = max(
     length(var.private_subnets),
@@ -1059,3 +1077,47 @@ resource "aws_default_vpc" "this" {
   )
 }
 
+##############
+# VPC Peering - Master
+##############
+
+resource "aws_vpc_peering_connection" "dev" {
+    count = var.create_dev_vpc_peering ? 1 : 0
+  peer_vpc_id   = var.dev_vpc_id
+  peer_owner_id = var.dev_account_id
+  vpc_id        = aws_vpc.this[0].id
+
+  tags = var.tags
+}
+
+resource "aws_vpc_peering_connection" "prod" {
+    count = var.create_prod_vpc_peering ? 1 : 0
+  peer_vpc_id   = var.prod_vpc_id
+  peer_owner_id = var.prod_account_id
+  vpc_id        = aws_vpc.this[0].id
+
+  tags = var.tags
+}
+
+##############
+# VPC Peering - Accepter
+##############
+
+# NOTE #
+# AWS allows a cross-account VPC Peering Connection to be deleted from either the requester's or accepter's side. However, Terraform only allows the VPC Peering Connection to be deleted from the requester's side by removing the corresponding aws_vpc_peering_connection resource from your configuration. Removing a aws_vpc_peering_connection_accepter resource from your configuration will remove it from your statefile and management, but will not destroy the VPC Peering Connection.
+# https://www.terraform.io/docs/providers/aws/r/vpc_peering_accepter.html #
+# https://github.com/hashicorp/terraform/issues/14212 -- this is helpful
+data "aws_caller_identity" "current" {}
+
+data "aws_vpc_peering_connection" "pc" {
+  peer_vpc_id          = aws_vpc.this[0].id # here, peer_vpc_id is the accepter account's vpc ID
+  peer_owner_id = data.aws_caller_identity.current.account_id # again, this is accepter account
+  owner_id = var.master_account_id 
+}
+
+resource "aws_vpc_peering_connection_accepter" "this" {
+  count = var.master_vpc_id == "" ? 0 : 1
+  vpc_peering_connection_id = data.aws_vpc_peering_connection.pc.id
+  auto_accept = true # use this if you want it to accept
+  tags = var.tags
+}

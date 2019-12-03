@@ -1818,3 +1818,55 @@ variable "elasticache_outbound_acl_rules" {
   ]
 }
 
+variable "aws_region" {
+    type = string
+    description = "AWS region to deploy resources to."
+}
+
+variable "dev_vpc_id" {
+    type = string
+    description = "VPC ID of the dev account"
+    default = ""
+}
+
+variable "create_dev_vpc_peering" {
+    type = bool
+    description = "Whether to create dev account VPC peering."
+    default = false
+}
+
+variable "create_prod_vpc_peering" {
+    type = bool
+    description = "Whether to create prod account VPC peering."
+    default = false
+}
+
+variable "prod_vpc_id" {
+    type = string
+    description = "VPC ID of the prod account"
+    default = ""
+}
+
+variable "master_vpc_id" {
+    type = string
+    description = "VPC ID of the master account. Only to be provided if the current VPC should be peered to it."
+    default = ""
+}
+
+variable "dev_account_id" {
+    type = string
+    description = "Account ID of the dev account"
+    default = ""
+}
+
+variable "prod_account_id" {
+    type = string
+    description = "Account ID of the prod account"
+    default = ""
+}
+
+variable "master_account_id" {
+    type = string
+    description = "Account ID of the master account"
+    default = ""
+}
