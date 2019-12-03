@@ -12,8 +12,8 @@ terraform {
 
     #   one user reporting this version fixes the data source for vpc peering id issue
       required_providers {
-    aws = "= 2.26.0"
-  }
+        aws = "= 2.40.0"
+    }
 }
 
 locals {
@@ -1107,18 +1107,17 @@ resource "aws_vpc_peering_connection" "prod" {
 # AWS allows a cross-account VPC Peering Connection to be deleted from either the requester's or accepter's side. However, Terraform only allows the VPC Peering Connection to be deleted from the requester's side by removing the corresponding aws_vpc_peering_connection resource from your configuration. Removing a aws_vpc_peering_connection_accepter resource from your configuration will remove it from your statefile and management, but will not destroy the VPC Peering Connection.
 # https://www.terraform.io/docs/providers/aws/r/vpc_peering_accepter.html #
 # https://github.com/hashicorp/terraform/issues/14212 -- this is helpful
-# data "aws_caller_identity" "current" {}
+data "aws_caller_identity" "current" {}
 
-# data "aws_vpc_peering_connection" "pc" {
-#   peer_vpc_id          = aws_vpc.this[0].id # here, peer_vpc_id is the accepter account's vpc ID
-#   peer_owner_id = data.aws_caller_identity.current.account_id # again, this is accepter account
-#   owner_id = var.master_account_id 
-# }
+data "aws_vpc_peering_connection" "pc" {
+  peer_vpc_id          = aws_vpc.this[0].id # here, peer_vpc_id is the accepter account's vpc ID
+  peer_owner_id = data.aws_caller_identity.current.account_id # again, this is accepter account
+  owner_id = var.master_account_id 
+}
 
-# resource "aws_vpc_peering_connection_accepter" "this" {
-#   count = var.master_vpc_id == "" ? 0 : 1
-# #   vpc_peering_connection_id = data.aws_vpc_peering_connection.pc.id
-#   vpc_peering_connection_id = var.vpc_peering_id_for_accepter
-#   auto_accept = true # use this if you want it to accept
-#   tags = var.tags
-# }
+resource "aws_vpc_peering_connection_accepter" "this" {
+  count = var.master_vpc_id == "" ? 0 : 1
+  vpc_peering_connection_id = data.aws_vpc_peering_connection.pc.id
+  auto_accept = true # use this if you want it to accept
+  tags = var.tags
+}
