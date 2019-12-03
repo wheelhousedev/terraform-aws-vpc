@@ -1118,7 +1118,7 @@ data "aws_vpc_peering_connection" "pc" {
 
 resource "aws_vpc_peering_connection_accepter" "this" {
   count = var.master_vpc_id == "" ? 0 : 1
-  vpc_peering_connection_id = data.aws_vpc_peering_connection.pc.id
+  vpc_peering_connection_id = data.aws_vpc_peering_connection.pc[0].id
   auto_accept = true # use this if you want it to accept
   tags = var.tags
 }
