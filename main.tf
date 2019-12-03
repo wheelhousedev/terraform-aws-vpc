@@ -1110,6 +1110,7 @@ resource "aws_vpc_peering_connection" "prod" {
 data "aws_caller_identity" "current" {}
 
 data "aws_vpc_peering_connection" "pc" {
+    count = var.master_vpc_id == "" ? 0 : 1
   peer_vpc_id          = aws_vpc.this[0].id # here, peer_vpc_id is the accepter account's vpc ID
   peer_owner_id = data.aws_caller_identity.current.account_id # again, this is accepter account
   owner_id = var.master_account_id 
