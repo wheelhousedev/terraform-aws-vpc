@@ -1870,3 +1870,9 @@ variable "master_account_id" {
     description = "Account ID of the master account"
     default = ""
 }
+
+variable "master_vpc_cidr" {
+    type = string
+    description = "The CIDR (with range) of the master VPC. Needed for route table"
+    default = "7.0.0.0/16"
+}
