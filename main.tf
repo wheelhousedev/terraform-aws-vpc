@@ -1122,3 +1122,17 @@ resource "aws_vpc_peering_connection_accepter" "this" {
   auto_accept = true # use this if you want it to accept
   tags = var.tags
 }
+
+resource "aws_route_table" "r" {
+    # only want this for dev/prod
+  count = var.master_vpc_id == "" ? 0 : 1
+
+  vpc_id = aws_vpc.this[0].id
+
+  route {
+    cidr_block = var.master_vpc_cidr
+    vpc_peering_connection_id = data.aws_vpc_peering_connection.pc[0].id
+  }
+
+  tags = var.tags
+}
