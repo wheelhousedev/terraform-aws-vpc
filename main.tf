@@ -1140,7 +1140,7 @@ resource "aws_route_table" "r" {
 
 resource "aws_route_table_association" "a" {
   count = var.master_vpc_id == "" ? 0 : 1
-
+  
   subnet_id      = aws_subnet.private[0].id
-  route_table_id = aws_route_table.r.id
+  route_table_id = aws_route_table.r[0].id
 }
