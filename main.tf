@@ -1125,7 +1125,7 @@ resource "aws_vpc_peering_connection_accepter" "this" {
 
 resource "aws_route_table" "r" {
     # only want this for dev/prod
-  count = var.master_vpc_id == "" && length(var.private_subnets) > 0 ? length(var.private_subnets) : 0
+  count = var.master_vpc_id == "" ? length(var.private_subnets) : 0
 
   vpc_id = aws_vpc.this[0].id
 
