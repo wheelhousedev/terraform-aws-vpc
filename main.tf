@@ -1125,7 +1125,7 @@ resource "aws_vpc_peering_connection_accepter" "this" {
 
 resource "aws_route_table" "r" {
     # only want this for dev/prod
-  count = var.master_vpc_id == "" ? 0 : 1
+  count = var.master_vpc_id == "" && length(var.private_subnets) > 0 ? length(var.private_subnets) : 0
 
   vpc_id = aws_vpc.this[0].id
 
@@ -1139,7 +1139,7 @@ resource "aws_route_table" "r" {
 
 
 resource "aws_route_table_association" "a" {
-   count = var.create_vpc && length(var.private_subnets) > 0 ? length(var.private_subnets) : 0
+   count = length(var.private_subnets) > 0 ? length(var.private_subnets) : 0
   subnet_id      = aws_subnet.private[count.index].id
   route_table_id = aws_route_table.r[0].id
 }
