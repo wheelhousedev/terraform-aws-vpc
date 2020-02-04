@@ -1886,3 +1886,8 @@ variable "atlas_cidr_block" {
   type        = string
   description = "The CIDR block used by the Atlas cluster."
 }
+
+variable "atlas_vpc_peering_connection_id" {
+    type = string
+    description = "The peering connection ID (pcx-XXXXX) for the Atlas connection."
+}

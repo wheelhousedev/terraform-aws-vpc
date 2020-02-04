@@ -1148,15 +1148,8 @@ resource "aws_route_table_association" "a" {
 ################
 # ATLAS PEERING
 ################
-
-data "aws_vpc_peering_connection" "atlas" {
-  peer_vpc_id   = aws_vpc.this[0].id                          # here, peer_vpc_id is the accepter account's vpc ID
-  peer_owner_id = data.aws_caller_identity.current.account_id # again, this is accepter account
-  owner_id      = var.atlas_aws_account_id
-}
-
 resource "aws_vpc_peering_connection_accepter" "atlas" {
-  vpc_peering_connection_id = data.aws_vpc_peering_connection.atlas.id
+  vpc_peering_connection_id = var.atlas_vpc_peering_connection_id
   auto_accept               = true # use this if you want it to accept
   tags                      = var.tags
 }
@@ -1166,7 +1159,7 @@ resource "aws_route_table" "atlas" {
 
   route {
     cidr_block                = var.atlas_cidr_block
-    vpc_peering_connection_id = data.aws_vpc_peering_connection.atlas.id
+    vpc_peering_connection_id = var.atlas_vpc_peering_connection_id
   }
 
   tags = var.tags
