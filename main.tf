@@ -1170,6 +1170,6 @@ resource "aws_route_table" "atlas" {
 resource "aws_route_table_association" "atlas" {
   depends_on = [aws_route_table.atlas]
 
-  subnet_id      = aws_subnet.private[0].id
+  subnet_id      = aws_subnet.private[2].id
   route_table_id = aws_route_table.atlas.id
 }
