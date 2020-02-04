@@ -1891,3 +1891,9 @@ variable "atlas_vpc_peering_connection_id" {
   type        = string
   description = "The peering connection ID (pcx-XXXXX) for the Atlas connection."
 }
+
+variable "is_peered" {
+    type = bool
+    description = "Set this to true if you've already accepted peering connections, false if first run. Reasoning here is that if there are multiple connections, the data source for the pc connection will need to look at the status value and that changes after acceptance."
+    default = false
+}
