@@ -9,11 +9,6 @@ terraform {
 
   # The latest version of Terragrunt (v0.19.0 and above) requires Terraform 0.12.0 or above.
   required_version = ">= 0.12.0"
-
-  #   one user reporting this version fixes the data source for vpc peering id issue
-  required_providers {
-    aws = "= 2.40.0"
-  }
 }
 
 locals {
