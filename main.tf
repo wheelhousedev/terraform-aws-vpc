@@ -9,11 +9,6 @@ terraform {
 
   # The latest version of Terragrunt (v0.19.0 and above) requires Terraform 0.12.0 or above.
   required_version = ">= 0.12.0"
-
-    #   one user reporting this version fixes the data source for vpc peering id issue
-      required_providers {
-        aws = "= 2.40.0"
-    }
 }
 
 locals {
@@ -1082,7 +1077,7 @@ resource "aws_default_vpc" "this" {
 ##############
 
 resource "aws_vpc_peering_connection" "dev" {
-    count = var.create_dev_vpc_peering ? 1 : 0
+  count         = var.create_dev_vpc_peering ? 1 : 0
   peer_vpc_id   = var.dev_vpc_id
   peer_owner_id = var.dev_account_id
   vpc_id        = aws_vpc.this[0].id
@@ -1091,7 +1086,7 @@ resource "aws_vpc_peering_connection" "dev" {
 }
 
 resource "aws_vpc_peering_connection" "prod" {
-    count = var.create_prod_vpc_peering ? 1 : 0
+  count         = var.create_prod_vpc_peering ? 1 : 0
   peer_vpc_id   = var.prod_vpc_id
   peer_owner_id = var.prod_account_id
   vpc_id        = aws_vpc.this[0].id
@@ -1110,38 +1105,66 @@ resource "aws_vpc_peering_connection" "prod" {
 data "aws_caller_identity" "current" {}
 
 data "aws_vpc_peering_connection" "pc" {
-    count = var.master_vpc_id == "" ? 0 : 1
-  peer_vpc_id          = aws_vpc.this[0].id # here, peer_vpc_id is the accepter account's vpc ID
+  count         = var.master_vpc_id == "" ? 0 : 1
+  peer_vpc_id   = aws_vpc.this[0].id                          # here, peer_vpc_id is the accepter account's vpc ID
   peer_owner_id = data.aws_caller_identity.current.account_id # again, this is accepter account
-  owner_id = var.master_account_id 
+  owner_id      = var.master_account_id
+  status        = var.is_peered ? "active" : "pending-acceptance"
 }
 
 resource "aws_vpc_peering_connection_accepter" "this" {
-  count = var.master_vpc_id == "" ? 0 : 1
+  count                     = var.master_vpc_id == "" ? 0 : 1
   vpc_peering_connection_id = data.aws_vpc_peering_connection.pc[0].id
-  auto_accept = true # use this if you want it to accept
-  tags = var.tags
+  auto_accept               = true # use this if you want it to accept
+  tags                      = var.tags
 }
 
 resource "aws_route_table" "r" {
-    # only want this for dev/prod
+  # only want this for dev/prod
   count = var.master_vpc_id == "" ? 0 : 1
 
   vpc_id = aws_vpc.this[0].id
 
   route {
-    cidr_block = var.master_vpc_cidr
+    cidr_block                = var.master_vpc_cidr
     vpc_peering_connection_id = data.aws_vpc_peering_connection.pc[0].id
   }
 
   tags = var.tags
 }
 
-
 resource "aws_route_table_association" "a" {
-    depends_on = ["aws_route_table.r"]
-  count = length(aws_route_table.r)
-  
+  depends_on = [aws_route_table.r]
+  count      = length(aws_route_table.r)
+
   subnet_id      = aws_subnet.private[0].id
   route_table_id = aws_route_table.r[0].id
+}
+
+################
+# ATLAS PEERING
+################
+resource "aws_vpc_peering_connection_accepter" "atlas" {
+  vpc_peering_connection_id = var.atlas_vpc_peering_connection_id
+  auto_accept               = true # use this if you want it to accept
+  tags                      = var.tags
+}
+
+resource "aws_route_table" "atlas" {
+  vpc_id = aws_vpc.this[0].id
+
+  route {
+    cidr_block                = var.atlas_cidr_block
+    vpc_peering_connection_id = var.atlas_vpc_peering_connection_id
+  }
+
+  tags = var.tags
+}
+
+
+resource "aws_route_table_association" "atlas" {
+  depends_on = [aws_route_table.atlas]
+
+  subnet_id      = aws_subnet.private[2].id
+  route_table_id = aws_route_table.atlas.id
 }
